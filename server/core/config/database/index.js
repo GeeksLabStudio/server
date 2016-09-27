@@ -7,7 +7,14 @@ mongoose.connection.on('open', function() {
 
 mongoose.connection.on('error', function(err) {
   // callback(err);
-  log.error('Database connection error:', err.message);
+  log.error('Database connection error: %s. Retrying to connect in 15 seconds...', err.message);
+
+  setTimeout(function(){
+
+    mongoose.connect(config.mongo.url, config.mongo.options);
+
+  },15 * 1000);
+
 });
 
 // Connect to database
