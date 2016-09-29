@@ -6,6 +6,7 @@ global.config = require('./environment');
 global.log = require('./logger');
 
 require('./database');
+require('./passport');
 
 
 console.log(
