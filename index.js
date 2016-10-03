@@ -7,9 +7,9 @@ var server = require('./server');
 log.server('Starting server...');
 
 // Start server
-server.listen(config.port, () => {
+server.listen(server.get('port'), () => {
     log.server('Server started on %d, in %s mode',
-        config.port,
-        config.env
+        server.get('port'),
+        server.get('env')
     );
 });

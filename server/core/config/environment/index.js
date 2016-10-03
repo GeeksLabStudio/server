@@ -23,6 +23,12 @@ const all = {
 
     logger: {
         path: '/logs'
+    },
+
+    jwt: {
+        secret: 'SECRET KEY',
+        issuer: 'accounts.test.test',
+        audience: 'gls.com'
     }
 
 };

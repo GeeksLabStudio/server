@@ -3,13 +3,13 @@
 var express = require('express');
 var router = express.Router();
 var controller = require('./controller');
+const passport = require('passport');
 
-router.get('/', function(req, res) {
-  res.json({
-    name: 'auth',
-    test: 'test'
-  })
-});
+const auth = require('../../core/auth')
+
+router.get('/', auth.isAuthenticated, controller.check);
+
+router.post('/', controller.check);
 
 router.get('/login', controller.check)
 router.post('/login', controller.login)

@@ -1,8 +1,10 @@
 var mongoose = require('mongoose');
 
+mongoose.Promise = global.Promise;
+
 mongoose.connection.on('open', function() {
   // callback();
-  log.info('Database connection opened');
+  log.info('Database connection opened ✓');
 });
 
 mongoose.connection.on('error', function(err) {

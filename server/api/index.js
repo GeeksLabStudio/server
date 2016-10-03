@@ -5,9 +5,7 @@ var router = express.Router();
 
 var ModulesController = require('./modules.controller');
 
-const $modules = new ModulesController({
-    router
-});
+const $modules = new ModulesController();
 
 router.get('/', function(req, res) {
   res.json({
@@ -17,36 +15,31 @@ router.get('/', function(req, res) {
   })
 });
 
-$modules.init()
-    .then(apiModules => {
-        apiModules.forEach(action => {
+$modules.actions.forEach(action => {
 
-            log.dev('Registering [/%s] api route ', action);
+  log.dev('Registering [/%s] api route ', action);
 
-            router.use(`/${action}`, require(`./${action}`))
-        })
-    })
-    .then(() => {
+  router.use(`/${action}`, require(`./${action}`))
+})
 
-        router.use(function(req, res, next) {
-            // route not found 404
-            // invoke error
-            var err = {
-             status: 404
-            }
-            next(err);
-        })
+router.use(function(req, res, next) {
+    // route not found 404
+    // invoke error
+    var err = {
+     status: 404
+    }
+    next(err);
+})
 
-        router.use(function(err, req, res, next) {
-            // main
-            // error handler
-            err.route = req.originalUrl;
+router.use(function(err, req, res, next) {
+    // main
+    // error handler
+    err.route = req.originalUrl;
+    err.status = err.status || 500;
 
-            res
-                .status(err.status || 500)
-                .json(err)
-        })
-
-    })
+    res
+        .status(err.status)
+        .json(err)
+})
 
 module.exports = router;
