@@ -54,6 +54,7 @@ module.exports.login = function(req, res, next) {
 
     res.json({
       status: 'ok',
+      profile: user.profile,
       token
     })
 
