@@ -1,41 +1,32 @@
 // authorization manager
 // using this class methods will allow you to verify access
-
 const ejwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
+let User = require('../../models/User');
 
-exports.verifyToken = function(req, res, next){
-  var token = getTokenFromHeader(req);
+exports.getAccessVerifier = function(accessLevel){
+  return (req, res, next)=>{
+    let token = getTokenFromHeader(req);
 
-  if (!token) {
-    let error = new Error({
-      msg: 'token is absent'
-    });
+    verifyToken(token)
+      .then(user => {
+        let role = user.profile.role;
 
-    next(error);
-  }
-    
-  let {
-    secret,
-    issuer,
-    audience,
-  } = config.jwt;
+        if (accessLevel.indexOf(role) >= 0) {
+          req.user = user;
+          next();
+        } else {
+          let error = new Error({
+            msg: 'permission de'
+          })
 
-  jwt.verify(token, secret, {
-    issuer,
-    audience
-  }, (err,decoded) => {
-    if (err) {
-      let error = new Error({
-        msg: 'invalid token'
+          next(error)
+        }
+      })
+      .then(null, err => {
+        next(err)
       });
-
-      next(error);
-    } else {
-      req.userID = decoded.id;
-      next();
-    }
-  });
+  }
 }
 
 exports.signToken = function(obj){
@@ -47,6 +38,38 @@ exports.signToken = function(obj){
   }
 
   return jwt.sign(obj, secret, opts)
+}
+
+function verifyToken(token){
+  if (!token)
+    return Promise.reject({
+      msg: 'No token provided'
+    })
+
+  return new Promise((resolve,reject) => {
+    let {
+      secret,
+      issuer,
+      audience,
+    } = config.jwt;
+
+    jwt.verify(token, secret, {
+      issuer,
+      audience
+    }, (err,decoded) => {
+      if (err)
+        reject(err)
+      else {
+        User.findById(decoded.id)
+          .then(user => {
+            resolve(user)
+          })
+          .then(null, err => {
+            reject(err)
+          })
+      }
+    });
+  });
 }
 
 function getTokenFromHeader(req){
@@ -61,5 +84,5 @@ function getTokenFromHeader(req){
     return req.query.token;
   }
 
-  return null
+  return null;
 }
