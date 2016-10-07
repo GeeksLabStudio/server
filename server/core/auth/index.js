@@ -4,59 +4,37 @@
 const ejwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
 
-/**
- * Login Required middleware.
- */
-exports.isAuthenticated = (req, res, next) => {
+exports.verifyToken = function(req, res, next){
+  var token = getTokenFromHeader(req);
+
+  if (!token) {
+    let error = new Error({
+      msg: 'token is absent'
+    });
+
+    next(error);
+  }
+    
   let {
     secret,
     issuer,
     audience,
   } = config.jwt;
 
-  let userProperty = 'tokenPayload';
-
-  return ejwt({
-    userProperty,
-    secret,
+  jwt.verify(token, secret, {
     issuer,
-    audience,
-    credentialsRequired: false,
-    getToken: function fromHeaderOrQuerystring (req) {
-      if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-          return req.headers.authorization.split(' ')[1];
-      } else if (req.query && req.query.token) {
-        return req.query.token;
-      }
-      return null;
+    audience
+  }, (err,decoded) => {
+    if (err) {
+      let error = new Error({
+        msg: 'invalid token'
+      });
+
+      next(error);
+    } else {
+      req.userID = decoded.id;
+      next();
     }
-  })
-};
-
-
-exports.verifyToken = function(token){
-  if (!token)
-    return Promise.reject({
-      msg: 'No token provided'
-    })
-
-  return new Promise((resolve,reject) => {
-    let {
-      secret,
-      issuer,
-      audience,
-    } = config.jwt;
-
-    jwt.verify(token, secret, {
-      issuer,
-      audience
-    }, (err,decoded) => {
-      if (err)
-        reject(err)
-      else
-        resolve(decoded)
-    });
-
   });
 }
 
@@ -69,4 +47,19 @@ exports.signToken = function(obj){
   }
 
   return jwt.sign(obj, secret, opts)
+}
+
+function getTokenFromHeader(req){
+  if (req.body.authorization)
+    return req.body.authorization
+
+  if (req.headers.authorization){
+    return req.headers.authorization;
+  }
+
+  if (req.query && req.query.token) {
+    return req.query.token;
+  }
+
+  return null
 }

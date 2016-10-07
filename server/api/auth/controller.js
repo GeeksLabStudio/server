@@ -1,32 +1,6 @@
 const passport = require('passport');
 const User = require('../../models/User');
-
 const $auth = require('../../core/auth');
-
-module.exports.check = function(req, res, next) {
-
-  let token = getTokenFromHeader(req);
-
-  $auth.verifyToken(token)
-    .then((profile) => {
-      let status = 'ok';
-
-      User.findById(profile.id)
-        .select('createdAt email profile tokens -_id')
-        .then((user) => {
-
-          // Responsing with account
-          res.json({
-            status,
-            user
-          })
-
-        })
-
-    })
-    .then(null, next)
-
-}
 
 module.exports.login = function(req, res, next) {
   // req.assert('email', 'Email is not valid').isEmail();
@@ -48,9 +22,8 @@ module.exports.login = function(req, res, next) {
       return next(info);
     }
 
-    let token = $auth.signToken({
-      id: user.id
-    })
+    let id = user.id;
+    let token = $auth.signToken({id})
 
     res.json({
       status: 'ok',
@@ -58,6 +31,7 @@ module.exports.login = function(req, res, next) {
       token
     })
 
+    log.dev(`${user._id} has been logged in`);
   })(req, res, next);
 }
 
@@ -102,25 +76,6 @@ module.exports.register = function(req, res, next) {
         profile: user.profile,
         token
       })
-
     });
-
   });
-}
-
-// Private methods
-
-function getTokenFromHeader(req){
-  if (req.body.authorization)
-    return req.body.authorization
-
-  if (req.headers.authorization){
-    return req.headers.authorization;
-  }
-
-  if (req.query && req.query.token) {
-    return req.query.token;
-  }
-
-  return null
 }
