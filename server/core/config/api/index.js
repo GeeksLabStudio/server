@@ -1,15 +1,16 @@
 module.exports = {
-	login: {
-		path: '/login'
-	},
-	register: {
-		path: '/register'
-	},
-	user: {
+	auth: {
+		login: {
+			path: '/login'
+		},
+		register: {
+			path: '/register'
+		},
 		profile: {
 			path: '/',
 			permissions: [
-				'USER'
+				'USER',
+				'ADMIN'
 			]
 		}
 	}

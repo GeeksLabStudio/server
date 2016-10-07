@@ -79,3 +79,19 @@ module.exports.register = function(req, res, next) {
     });
   });
 }
+
+module.exports.profile = function(req, res, next) {
+  let _id = req.user._id;
+
+  User.findById(_id)
+    .select('profile -_id')
+    .then(user => {
+      res.json({
+        status: 'ok',
+        user
+      })
+    })
+    .then(null, err => {
+      next(err)
+    })
+}
