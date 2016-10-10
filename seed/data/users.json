@@ -1,0 +1,21 @@
+{
+	"model": "User",
+  "documents": [
+     {
+	    "email" : "test@test.ru",
+	    "password" : "$2a$10$7mWybqJD/EAsMvtUWro3x.NqudyvJ3RXhOZizxPyEi0whkGVCjoxK",
+	    "profile" : {
+        "username" : "apoddubny",
+        "image" : "http://static.giantbomb.com/uploads/square_small/1/14036/617777-james.png",
+        "website" : "",
+        "location" : "",
+        "gender" : "male",
+        "name" : "Andrey",
+        "lastName" : "Poddubny",
+        "role" : "USER"
+	    },
+	    "tokens" : [],
+	    "__v" : 0
+		}
+  ]
+}

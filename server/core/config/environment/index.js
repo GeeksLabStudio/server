@@ -3,37 +3,35 @@ var _ = require('lodash');
 var _root = path.normalize(__dirname + '/../../../..');
 
 const all = {
-    env: process.env.NODE_ENV,
+  env: process.env.NODE_ENV,
 
-    process: {
-        platform: process.platform
-    },
+  process: {
+    platform: process.platform
+  },
 
-    root: _root,
+  root: _root,
 
-
-    session: {
-        secret: 'server super klu4',
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-          secure: false
-        }
-    },
-
-    logger: {
-        path: '/logs'
-    },
-
-    jwt: {
-        secret: 'SECRET KEY',
-        issuer: 'accounts.test.test',
-        audience: 'gls.com'
+  session: {
+    secret: 'server super klu4',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false
     }
+  },
 
+  logger: {
+    path: '/logs'
+  },
+
+  jwt: {
+    secret: 'SECRET KEY',
+    issuer: 'accounts.test.test',
+    audience: 'gls.com'
+  }
 };
 
 module.exports = _.merge(
-    all,
-    require('./' + process.env.NODE_ENV + '.js') || {}
+  all,
+  require('./' + process.env.NODE_ENV + '.js') || {}
 );
