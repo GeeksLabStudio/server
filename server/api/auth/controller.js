@@ -85,10 +85,10 @@ module.exports.profile = function(req, res, next) {
 
   User.findById(_id)
     .select('profile -_id')
-    .then(user => {
+    .then(data => {
       res.json({
         status: 'ok',
-        user
+        data
       })
     })
     .then(null, err => {

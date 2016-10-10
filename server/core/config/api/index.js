@@ -13,5 +13,8 @@ module.exports = {
 				'ADMIN'
 			]
 		}
+	},
+	articles: {
+		path: '/'
 	}
 }
