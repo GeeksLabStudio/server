@@ -20,13 +20,12 @@ app.use(morgan('dev'));
 app.set('port', config.port)
 app.set('env', config.env)
 
-if (process.env.NODE_ENV === 'development') {
-  // only use in development
+if (config.env == 'development') { // using only in development
   app.use(errorhandler({
     log: (err,str,req) => {
       let title = 'Error in ' + req.method + ' ' + req.url
 
-      console.error({
+      log.error({
         title: title,
         message: str
       })

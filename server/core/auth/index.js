@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 let User = require('../../models/User');
 
 exports.getAccessVerifier = function(accessLevel){
-  return (req, res, next)=>{
+  return (req, res, next) => {
     let token = getTokenFromHeader(req);
 
     verifyToken(token)
@@ -16,15 +16,17 @@ exports.getAccessVerifier = function(accessLevel){
           req.user = user;
           next();
         } else {
-          let error = new Error({
-            msg: 'permission de'
-          })
+          let error = new ApiError(
+            ore.api.status.denied,
+            'You not allowed to do this'
+          );
 
           next(error)
         }
       })
       .then(null, err => {
-        next(err)
+        let error = new ApiError(400, err);
+        next(error)
       });
   }
 }
@@ -41,10 +43,10 @@ exports.signToken = function(obj){
 }
 
 function verifyToken(token){
-  if (!token)
-    return Promise.reject({
-      msg: 'No token provided'
-    })
+  if (!token){
+    let error = new ApiError(400, 'No token provided')
+    return Promise.reject(error)
+  }
 
   return new Promise((resolve,reject) => {
     let {
@@ -57,15 +59,18 @@ function verifyToken(token){
       issuer,
       audience
     }, (err,decoded) => {
-      if (err)
-        reject(err)
+      if (err){
+        let error = new ApiError(400, err);
+        reject(error)
+      }
       else {
         User.findById(decoded.id)
           .then(user => {
             resolve(user)
           })
           .then(null, err => {
-            reject(err)
+            let error = new ApiError(400, err)
+            reject(error)
           })
       }
     });

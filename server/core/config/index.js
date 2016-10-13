@@ -2,6 +2,7 @@
 
 var pretty = require('prettyjson');
 
+global.core = require('./var');
 global.config = require('./environment');
 global.log = require('./logger');
 

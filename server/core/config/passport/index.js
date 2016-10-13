@@ -24,23 +24,27 @@ passport.deserializeUser((id, done) => {
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) {
+      let error = new ApiError(400, err);
       return done(err);
     }
 
     if (!user) {
-      return done(null, false, { msg: `Email ${email} not found.` });
+      let error = new ApiError(400, `Email ${email} not found.`)
+      return done(null, false, error);
     }
 
     user.comparePassword(password, (err, isMatch) => {
       if (err) {
-        return done(err);
+        let error = new ApiError(400, err);
+        return done(error);
       }
 
       if (isMatch) {
         return done(null, user);
       }
 
-      return done(null, false, { msg: 'Invalid email or password.' });
+      let error = new ApiError(400, 'Invalid email or password.' )
+      return done(null, false, error);
     });
   });
 }));

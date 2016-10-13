@@ -15,18 +15,20 @@ module.exports.login = function(req, res, next) {
 
   passport.authenticate('local', (err, user, info) => {
     if (err) {
-      return next(err);
+      let error = new ApiError(400, err);
+      return next(error);
     }
 
     if (!user) {
-      return next(info);
+      let error = new ApiError(400, info);
+      return next(error);
     }
 
     let id = user.id;
     let token = $auth.signToken({id})
 
     res.json({
-      status: 'ok',
+      status: core.api.status.ok,
       profile: user.profile,
       token
     })
@@ -53,17 +55,18 @@ module.exports.register = function(req, res, next) {
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {
     if (err) {
-      return next(err);
+      let error = new ApiError(400, err);
+      return next(error);
     }
 
     if (existingUser) {
-      return next({
-        msg: 'Account with that email address already exists.'
-      })
+      let error = new ApiError(400, 'Account with that email address already exists.')
+      return next(error)
     }
 
     user.save((err) => {
       if (err) {
+        let error = new ApiError(400, err);
         return next(err);
       }
 
@@ -72,7 +75,7 @@ module.exports.register = function(req, res, next) {
       })
 
       res.json({
-        status: 'ok',
+        status: core.api.status.ok,
         profile: user.profile,
         token
       })
@@ -87,11 +90,13 @@ module.exports.profile = function(req, res, next) {
     .select('profile -_id')
     .then(data => {
       res.json({
-        status: 'ok',
+        status: core.api.status.ok,
         data
       })
     })
     .then(null, err => {
-      next(err)
+      let errResponse = new ApiError(401, err);
+
+      next(errResponse);
     })
 }

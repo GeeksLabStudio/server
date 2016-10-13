@@ -22,24 +22,43 @@ $modules.actions.forEach(action => {
   router.use(`/${action}`, require(`./${action}`))
 })
 
+/*
+  Route not found middleware
+  Creating error and passing it to error handler
+*/
 router.use(function(req, res, next) {
-    // route not found 404
-    // invoke error
-    var err = {
-     status: 404
-    }
+    var err = new ApiError(404, 'Page not found');
     next(err);
 })
 
+/*
+  Error handling middleware
+*/
 router.use(function(err, req, res, next) {
-    // main
-    // error handler
-    err.route = req.originalUrl;
-    err.status = err.status || 500;
+    if (!(err instanceof ApiError))
+      err = new ApiError(
+        core.api.status.internalerr,
+        'Unhandled Server Error'
+      );
+
+    // Error json response object
+    let jsonErrorResponse = {
+      status: err.status,
+      error: {
+        route: req.originalUrl,
+
+      }
+    }
+
+    if (err.message)
+      jsonErrorResponse.error.message = err.message;
+
+    if (err.properties)
+      jsonErrorResponse.error = Object.assign({}, err.properties, jsonErrorResponse.error);
 
     res
-        .status(err.status)
-        .json(err)
+        .status(err.code)
+        .json(jsonErrorResponse)
 })
 
 module.exports = router;
