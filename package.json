@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -c",
     "start": "gulp",
-    "seed": "node seed/index.js",
-    "test": "mocha -c"
+    "seed": "node seed/index.js"
   },
   "author": "GLS",
   "license": "ISC",
@@ -24,6 +23,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
+    "cors": "^2.8.1",
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "express-jwt": "^5.0.0",
