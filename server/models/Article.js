@@ -12,6 +12,7 @@ const articleSchema = new mongoose.Schema({
     type: Date, 
     default: Date.now
   },
+  html: String,
 	comments: [{
     author: {
     	type: mongoose.Schema.Types.ObjectId, 
