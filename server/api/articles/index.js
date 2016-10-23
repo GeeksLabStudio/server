@@ -10,4 +10,9 @@ router.get(
 	controller.articles
 );
 
+router.get(
+	config.articles.children.article.path,
+	controller.article
+);
+
 module.exports = router;

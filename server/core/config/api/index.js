@@ -15,6 +15,11 @@ module.exports = {
 		}
 	},
 	articles: {
-		path: '/'
+		path: '/',
+		children: {
+			article: {
+				path: '/:id',
+			}
+		}
 	}
 }

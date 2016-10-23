@@ -4,6 +4,14 @@ const articleSchema = new mongoose.Schema({
 	title: String,
 	image: String,
 	short_desc: String,
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User'
+  }],
+  date: {
+    type: Date, 
+    default: Date.now
+  },
 	comments: [{
     author: {
     	type: mongoose.Schema.Types.ObjectId, 

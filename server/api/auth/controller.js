@@ -14,7 +14,8 @@ module.exports.login = function(req, res, next) {
   // }
 
   passport.authenticate('local', (err, user, info) => {
-    if (err) {
+    setTimeout(()=>{
+      if (err) {
       let error = new ApiError(400, err);
       return next(error);
     }
@@ -34,6 +35,7 @@ module.exports.login = function(req, res, next) {
     })
 
     log.dev(`${user._id} has been logged in`);
+  }, 3000)
   })(req, res, next);
 }
 
