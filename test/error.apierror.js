@@ -84,6 +84,16 @@ describe('Testing ApiError class', function(){
     error.toString().should.be.an('string')
   })
 
+  it('should have all values if passsing error obj as second argument', () => {
+    let error_message = 'This is a error';
+    let err = new Error(error_message);
+
+    let apiErr = new ApiError(500, err);
+
+    apiErr.should.have.property('message', error_message)
+    apiErr.should.have.property('code', 500)
+  })
+
   it('should throw error', () => {
     var fn = function(){ throw error; }
 

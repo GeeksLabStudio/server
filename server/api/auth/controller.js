@@ -14,8 +14,7 @@ module.exports.login = function(req, res, next) {
   // }
 
   passport.authenticate('local', (err, user, info) => {
-    setTimeout(()=>{
-      if (err) {
+    if (err) {
       let error = new ApiError(400, err);
       return next(error);
     }
@@ -30,12 +29,13 @@ module.exports.login = function(req, res, next) {
 
     res.json({
       status: core.api.status.ok,
-      profile: user.profile,
-      token
+      data: {
+        profile: user.profile,
+        token
+      }
     })
 
     log.dev(`${user._id} has been logged in`);
-  }, 3000)
   })(req, res, next);
 }
 
@@ -78,8 +78,10 @@ module.exports.register = function(req, res, next) {
 
       res.json({
         status: core.api.status.ok,
-        profile: user.profile,
-        token
+        data: {
+          profile: user.profile,
+          token
+        }
       })
     });
   });
