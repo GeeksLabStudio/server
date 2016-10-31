@@ -17,7 +17,7 @@ exports.getAccessVerifier = function(accessLevel){
           next();
         } else {
           let error = new ApiError(
-            ore.api.status.denied,
+            core.api.status.denied,
             'You not allowed to do this'
           );
 
