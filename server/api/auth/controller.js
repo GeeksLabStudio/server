@@ -14,6 +14,8 @@ module.exports.login = function(req, res, next) {
 
   let email = req.body.email;
   let password = req.body.password;
+  
+  log.dev(`AuthController: ${email} trying to login`)
 
   $auth.authenticate('local', {
     email,

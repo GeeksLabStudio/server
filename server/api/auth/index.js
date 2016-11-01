@@ -3,6 +3,7 @@
 var express 		= require('express');
 var router 			= express.Router();
 var controller 	= require('./controller');
+
 var config 			= require('../../core/config/api'); // should be removed
 var auth 				= require('../../core/auth');
 
