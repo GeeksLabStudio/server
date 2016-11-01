@@ -48,25 +48,19 @@ exports.authenticate = function(strategy, credentials){
     }).then(user => {
       if (user){
         log.dev(`AuthService: ${email} exist, checking pwd`)
+        
         // user exist - then checking password
-        user.comparePassword(password, (err, isMatch) => {
-          if (err){
-            // some other db error
-            let error = new ApiError(400, err)
-            reject(error)
-          }
+        let isMatch = user.password == password;
 
-          if (isMatch){
-            // if password match
-            log.dev(`AuthService: ${user.id} authenticated`)
-            resolve(user)
-          } else {
-            // if password not matching
-            let error = new ApiError(400, 'Invalid email or password')
-            reject(error)
-          }
-
-        })
+        if (isMatch){
+          // if password match
+          log.dev(`AuthService: ${user.id} authenticated`)
+          resolve(user)
+        } else {
+          // if password not matching
+          let error = new ApiError(400, 'Invalid email or password')
+          reject(error)
+        }
       } else {
         // no user found
         let error = new ApiError(400, 'Invalid email or password')
@@ -80,6 +74,32 @@ exports.authenticate = function(strategy, credentials){
 
   })
 
+}
+
+
+exports.simple_authenticate = function(strategy, credentials){
+
+  let email = credentials.email.toLowerCase();
+  let password = credentials.password;
+
+  return User.findOne({
+      email
+    })
+    .then(user => {
+      // checking is user exist
+      return user 
+        ? user 
+        : Promise.reject()
+    })
+    .then(user => {
+      // checking password
+      return user.comparePassword(password) 
+        ? user
+        : Promise.reject()
+    })
+    .then(null, error => {
+      return Promise.reject(error || new ApiError(400, 'Invalid email or password'))
+    })
 }
 
 exports.registrate = function(strategy, credentials){

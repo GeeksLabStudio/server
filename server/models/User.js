@@ -58,7 +58,10 @@ userSchema.methods.comparePassword = function (candidatePassword, cb) {
   // });
   let isMatch = this.password == candidatePassword;
 
-   cb(isMatch)
+  if (cb)
+    cb(isMatch)
+  
+  return isMatch
 };
 
 /**
