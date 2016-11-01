@@ -1,10 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
-const passport = require('passport');
 const jwt = require('express-jwt');
 const cors = require('cors');
 const compression = require('compression');
-const expressStatusMonitor = require('express-status-monitor');
 const expressValidator = require('express-validator');
 const errorhandler = require('errorhandler')
 
@@ -31,12 +29,14 @@ if (config.env == 'development') { // using only in development
       })
     }
   }));
+
+  const expressStatusMonitor = require('express-status-monitor');
+  app.get('/status', expressStatusMonitor());
 }
 
 // CORS
 app.use(cors());
 
-app.get('/status', expressStatusMonitor());
 
 app.use(compression());
 app.use(bodyParser.urlencoded({
@@ -44,8 +44,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(expressValidator());
-
-app.use(passport.initialize());
 
 
 module.exports = app;

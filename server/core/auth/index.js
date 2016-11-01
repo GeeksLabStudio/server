@@ -1,6 +1,5 @@
 // authorization manager
 // using this class methods will allow you to verify access
-const jwt = require('jsonwebtoken');
 let User = require('../../models/User');
 
 let $token = require('./token');
