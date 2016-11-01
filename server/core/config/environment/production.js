@@ -7,12 +7,12 @@ module.exports = {
 
     mongo: {
         url: 'mongodb://127.0.0.1/testServerData',
-        // options: {
-        //     user: 'lolka1276',
-        //     pass: 'PWNZ76555_nikogda_ne_ugadaesh',
-        //     auth: {
-        //         authdb: 'authusers'
-        //     }
-        // }
+        options: {
+            user: 'lolka1276',
+            pass: 'PWNZ76555_nikogda_ne_ugadaesh',
+            auth: {
+                authdb: 'admin'
+            }
+        }
     }
 }
