@@ -47,6 +47,7 @@ exports.authenticate = function(strategy, credentials){
       email
     }).then(user => {
       if (user){
+        log.dev(`AuthService: ${email} exist, checking pwd`)
         // user exist - then checking password
         user.comparePassword(password, (err, isMatch) => {
           if (err){
