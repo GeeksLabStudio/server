@@ -31,27 +31,34 @@ const userSchema = new mongoose.Schema({
 
 /**
  * Password hash middleware.
+ * Currently disabled
  */
-userSchema.pre('save', function (next) {
-  const user = this;
-  if (!user.isModified('password')) { return next(); }
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) { return next(err); }
-    bcrypt.hash(user.password, salt, null, (err, hash) => {
-      if (err) { return next(err); }
-      user.password = hash;
-      next();
-    });
-  });
-});
+// userSchema.pre('save', function (next) {
+//   const user = this;
+//   if (!user.isModified('password')) { return next(); }
+//   bcrypt.genSalt(10, (err, salt) => {
+//     if (err) { return next(err); }
+//     bcrypt.hash(user.password, salt, null, (err, hash) => {
+//       if (err) { return next(err); }
+//       user.password = hash;
+//       next();
+//     });
+//   });
+// });
 
 /**
  * Helper method for validating user's password.
  */
 userSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    cb(err, isMatch);
-  });
+  // This stuff is currently disabled
+  // go check arm openssl issues
+  // -------------------------------
+  // bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+  //   cb(err, isMatch);
+  // });
+  let isMatch = this.password == candidatePassword;
+
+   cb(isMatch)
 };
 
 /**
