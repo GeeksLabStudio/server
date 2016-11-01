@@ -1,18 +1,22 @@
 // authorization manager
 // using this class methods will allow you to verify access
-const ejwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
 let User = require('../../models/User');
+
+let $token = require('./token');
+
+// AUTH MIDDLEWARES
 
 exports.getAccessVerifier = function(accessLevel){
   return (req, res, next) => {
     let token = getTokenFromHeader(req);
 
-    verifyToken(token)
+    $token.verifyToken(token)
       .then(user => {
         let role = user.profile.role;
 
         if (accessLevel.indexOf(role) >= 0) {
+          req.isAuthenticated = true;
           req.user = user;
           next();
         } else {
@@ -31,51 +35,88 @@ exports.getAccessVerifier = function(accessLevel){
   }
 }
 
-exports.signToken = function(obj){
-  let secret = config.jwt.secret;
+// AUTH PUBLIC METHODS
 
-  let opts = {
-    audience: config.jwt.audience,
-    issuer: config.jwt.issuer
-  }
+exports.authenticate = function(strategy, credentials){
 
-  return jwt.sign(obj, secret, opts)
-}
-
-function verifyToken(token){
-  if (!token){
-    let error = new ApiError(400, 'No token provided')
-    return Promise.reject(error)
-  }
+  let email = credentials.email.toLowerCase();
+  let password = credentials.password;
 
   return new Promise((resolve,reject) => {
-    let {
-      secret,
-      issuer,
-      audience,
-    } = config.jwt;
 
-    jwt.verify(token, secret, {
-      issuer,
-      audience
-    }, (err,decoded) => {
-      if (err){
-        let error = new ApiError(400, err);
-        reject(error)
-      }
-      else {
-        User.findById(decoded.id)
-          .then(user => {
-            resolve(user)
-          })
-          .then(null, err => {
+    User.findOne({
+      email
+    }).then(user => {
+      if (user){
+        // user exist - then checking password
+        user.comparePassword(password, (err, isMatch) => {
+          if (err){
+            // some other db error
             let error = new ApiError(400, err)
             reject(error)
-          })
+          }
+
+          if (isMatch){
+            // if password match
+            log.dev(`AuthService: ${user.id} authenticated`)
+            resolve(user)
+          } else {
+            // if password not matching
+            let error = new ApiError(400, 'Invalid email or password')
+            reject(error)
+          }
+
+        })
+      } else {
+        // no user found
+        let error = new ApiError(400, 'Invalid email or password')
+        reject(error)
       }
-    });
-  });
+    }).then(null, err => {
+      // some other db error
+      let error = new ApiError(400, err)
+      reject(error)
+    })
+
+  })
+
 }
+
+exports.registrate = function(strategy, credentials){
+  let email = credentials.email.toLowerCase();
+  let password = credentials.password;
+
+  return new Promise((resolve,reject) => {
+    User.findOne({
+      email
+    }).then(isExist => {
+      if (isExist){
+        let error = new ApiError(400, 'User with same email already exist');
+        reject(error)
+      } else {
+        // creating new user
+        return new User({
+          email,
+          password
+        }).save()
+      }
+
+
+    }).then(user => {
+      log.dev(`AuthService: ${user.id} registered`)
+      resolve(user)
+    }).then(null, err => {
+      let error = new ApiError(400, err)
+      reject(error)
+    })
+  })
+}
+
+exports.signToken = $token.signToken;
+exports.verifyToken = $token.verifyToken;
+
+
+// AUTH PRIVATE METHODS
 
 function getTokenFromHeader(req){
   if (req.body.authorization)

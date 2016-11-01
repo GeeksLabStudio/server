@@ -13,30 +13,33 @@ module.exports.login = function(req, res, next) {
   //   return next(errors)
   // }
 
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      let error = new ApiError(400, err);
-      return next(error);
-    }
+  let email = req.body.email;
+  let password = req.body.password;
 
-    if (!user) {
-      let error = new ApiError(400, info);
-      return next(error);
-    }
+  $auth.authenticate('local', {
+    email,
+    password
+  }).then(user => {
 
+    // If OK - signing new token
     let id = user.id;
+    let profile = user.profile;
     let token = $auth.signToken({id})
+
+    log.dev(`AuthController: ${id} logged in`);
 
     res.json({
       status: core.api.status.ok,
       data: {
-        profile: user.profile,
+        profile,
         token
       }
     })
 
-    log.dev(`${user._id} has been logged in`);
-  })(req, res, next);
+  }).then(null, error => {
+    next(error)
+  })
+
 }
 
 module.exports.register = function(req, res, next) {
@@ -50,41 +53,32 @@ module.exports.register = function(req, res, next) {
   //   return next(errors)
   // }
 
-  const user = new User({
-    email: req.body.email,
-    password: req.body.password
-  });
+  let email = req.body.email;
+  let password = req.body.password;
 
-  User.findOne({ email: req.body.email }, (err, existingUser) => {
-    if (err) {
-      let error = new ApiError(400, err);
-      return next(error);
-    }
+  $auth.registrate('local', {
+    email,
+    password
+  }).then(user => {
+    // If OK - signing new token
+    let id = user.id;
+    let profile = user.profile;
+    let token = $auth.signToken({id});
 
-    if (existingUser) {
-      let error = new ApiError(400, 'Account with that email address already exists.')
-      return next(error)
-    }
+    log.dev(`AuthController: ${id} is registered`);
 
-    user.save((err) => {
-      if (err) {
-        let error = new ApiError(400, err);
-        return next(err);
+    res.json({
+      status: core.api.status.ok,
+      data: {
+        profile,
+        token
       }
-
-      let token = $auth.signToken({
-        id: user.id
-      })
-
-      res.json({
-        status: core.api.status.ok,
-        data: {
-          profile: user.profile,
-          token
-        }
-      })
     });
-  });
+
+  }).then(null, error => {
+    next(error)
+  })
+
 }
 
 module.exports.profile = function(req, res, next) {
