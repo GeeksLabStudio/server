@@ -1,9 +1,7 @@
-var core = require('./core');
-var api = require('./api');
-
+// module dependencies
+const core 	= require('./core');
+const api 	= require('./api');
 
 core.app.use(api);
-
-// var server = require('http').createServer();
 
 module.exports = core.app;

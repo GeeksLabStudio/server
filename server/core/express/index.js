@@ -1,14 +1,12 @@
-const express = require('express');
-const morgan = require('morgan');
-const jwt = require('express-jwt');
-const cors = require('cors');
-const compression = require('compression');
-const expressValidator = require('express-validator');
-const errorhandler = require('errorhandler')
-
-const bodyParser = require('body-parser');
-
-const path = require('path');
+// module dependencies
+const express           = require('express');
+const morgan            = require('morgan');
+const jwt               = require('express-jwt');
+const cors              = require('cors');
+const compression       = require('compression');
+const expressValidator  = require('express-validator');
+const errorhandler      = require('errorhandler')
+const bodyParser        = require('body-parser');
 
 // Creating Express Server
 const app = express();
@@ -37,13 +35,11 @@ if (config.env == 'development') { // using only in development
 // CORS
 app.use(cors());
 
-
 app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
 app.use(expressValidator());
-
 
 module.exports = app;

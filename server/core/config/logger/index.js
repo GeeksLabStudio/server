@@ -1,6 +1,6 @@
-var winston = require('winston');
-var path = require('path');
-var fs = require('fs');
+const winston = require('winston');
+const path    = require('path');
+const fs      = require('fs');
 
 var logs = path.join(config.root, config.logger.path);
 

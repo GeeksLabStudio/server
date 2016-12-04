@@ -1,4 +1,5 @@
 module.exports = {
+	server: 'localhost:' + 4000,
 	auth: {
 		login: {
 			path: '/login'
@@ -12,14 +13,6 @@ module.exports = {
 				'USER',
 				'ADMIN'
 			]
-		}
-	},
-	articles: {
-		path: '/',
-		children: {
-			article: {
-				path: '/:id',
-			}
 		}
 	}
 }
