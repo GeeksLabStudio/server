@@ -1,6 +1,7 @@
-var path = require('path');
-var _ = require('lodash');
-var _root = path.normalize(__dirname + '/../../../..');
+// module dependencies
+const path  = require('path');
+const _     = require('lodash');
+const _root = path.normalize(__dirname + '/../../../..');
 
 const all = {
   env: process.env.NODE_ENV,
@@ -10,15 +11,6 @@ const all = {
   },
 
   root: _root,
-
-  session: {
-    secret: 'server super klu4',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false
-    }
-  },
 
   logger: {
     path: '/logs'

@@ -1,7 +1,6 @@
-// ==================================
-// Development specific configuration
-// ==================================
-
+/**
+ * Development specific configuration
+ */
 module.exports = {
   port: 4000,
 
