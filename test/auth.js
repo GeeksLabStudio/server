@@ -1,10 +1,12 @@
 // module dependencies
-const _        = require('lodash');
-const chai     = require('chai');
-const expect   = chai.expect;
-const should   = chai.should();
-const request = require('supertest');
-const config 	= require('../server/core/config/api');
+const _        	= require('lodash');
+const chai     	= require('chai');
+const expect   	= chai.expect;
+const should   	= chai.should();
+const request 	= require('supertest');
+const service 	= require('./service');
+const config 		= require('../server/core/config/api');
+const api 			= config.auth;
 
 describe('Auth', () => {
 	it('Authentication: correct', done => {
@@ -14,13 +16,14 @@ describe('Auth', () => {
 		}
 
 		request(config.server)
-			.post('/auth/login')
+			.post(api.path + api.login.path)
 			.send(credentials)
 			.expect(200)
 			.expect(res => {
 				expect(res.body.status).to.equal('ok')
 				expect(res.body.data).to.have.all.keys('profile', 'token');
 				global.Authorization = res.body.data.token;
+				global.profile = res.body.data.profile;
 			})
 			.end(done)
 	})
@@ -32,7 +35,7 @@ describe('Auth', () => {
 		}
 
 		request(config.server)
-			.post('/auth/login')
+			.post(api.path + api.login.path)
 			.send(credentials)
 			.expect(404)
 			.expect(res => {
@@ -43,24 +46,36 @@ describe('Auth', () => {
 	})
 
 	it('Authentication: profile', done => {
+		let code = service.expectedCode(api.path + api.profile.permissions, profile);
+
 		request(config.server)
-			.get('/auth/')
+			.get(api.path + api.profile.path)
 			.set({Authorization})
-			.expect(200)
+			.expect(code)
 			.expect(res => {
-				expect(res.body.status).to.equal('ok');
-				expect(res.body.data).to.have.all.keys('profile', '_id', 'email');
+				if (code == 200)
+					expect(res.body.data).to.have.all.keys('profile', '_id', 'email');
 			})
 			.end(done)
 	})
 
-	it('Authentication: profile incorrect', done => {
+	it('Authentication: profile incorrect token', done => {
 		request(config.server)
 			.get('/auth/')
 			.set({Authorization: Authorization + '1'})
 			.expect(400)
 			.expect(res => {
 				expect(res.body.error.message).to.equal('invalid token')
+			})
+			.end(done)
+	})
+
+	it('Authentication: profile without token', done => {
+		request(config.server)
+			.get(api.path + api.profile.path)
+			.expect(400)
+			.expect(res => {
+				expect(res.body.error.message).to.equal('No token provided')
 			})
 			.end(done)
 	})
@@ -75,7 +90,7 @@ describe('Auth', () => {
 		}
 
 		request(config.server)
-			.post('/auth/register')
+			.post(api.path + api.register.path)
 			.send(credentials)
 			.expect(200)
 			.expect(res => {
@@ -91,8 +106,9 @@ describe('Auth', () => {
 			password: 'admin'
 		}
 
+
 		request(config.server)
-			.post('/auth/register')
+			.post(api.path + api.register.path)
 			.send(credentials)
 			.expect(400)
 			.expect(res => {

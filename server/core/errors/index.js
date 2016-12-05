@@ -1,7 +1,3 @@
-// Error classes
-
-'use strict';
-
 /*
   Currently useing this error class in api
 */
@@ -73,11 +69,7 @@ function getStatusByCode(code){
       return core.api.status.overloaded
     case 503:
       return core.api.status.timeout
-    case 550:
-      return core.api.status.denied
     default:
-      // if no match
-      // return [500] Internal Error
       return core.api.status.internalerr
   }
 }
@@ -112,11 +104,7 @@ function getCodeByStatus(status){
       return 502
     case core.api.status.timeout:
       return 503
-    case core.api.status.denied:
-      return 550
     default:
-      // if no match
-      // return [500] Internal Error
       return 500
   }
 }

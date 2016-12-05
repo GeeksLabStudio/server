@@ -12,7 +12,7 @@ gulp.task('server:nodemon', function() {
       'server/**/*.js'
       ]
     }).on('restart', function () {
-          console.log('File change found. Restarting the server.');
+      console.log('File change found. Restarting the server.');
   });
 });
 

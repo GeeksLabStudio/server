@@ -9,7 +9,6 @@ mongoose.Promise = global.Promise;
 seeder.connect(config.mongo.url, function() {
 	// Users
   seeder.start(__dirname + '/data', [
-    { path: models + 'User.js', name: 'User', clear: true },
-    { path: models + 'Article.js', name: 'Article', clear: true }
+    { path: models + 'User.js', name: 'User', clear: true }
   ], false);
 });

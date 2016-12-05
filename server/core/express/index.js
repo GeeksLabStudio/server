@@ -32,9 +32,6 @@ if (config.env == 'development') { // using only in development
   app.get('/status', expressStatusMonitor());
 }
 
-// CORS
-app.use(cors());
-
 app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true

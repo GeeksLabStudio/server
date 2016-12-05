@@ -25,10 +25,7 @@ class AuthService {
           } 
 
           else {
-            let error = new ApiError(
-              core.api.status.denied,
-              'You not allowed to do this'
-            );
+            let error = new ApiError(403);
 
             next(error)
           }

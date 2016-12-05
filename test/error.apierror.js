@@ -12,14 +12,6 @@ const errors = require('../server/core/errors');
 
 const ApiError = errors.ApiError;
 
-before(function() {
-  console.log('Testing started')
-});
-
-after(function() {
-  console.log('Testing finished')
-});
-
 describe('Testing ApiError class', function(){
   var error = new ApiError(404, 'Page not found');
 

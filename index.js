@@ -8,8 +8,8 @@ log.server('Starting server...');
 
 // Start server
 server.listen(server.get('port'), () => {
-    log.server('Server started on %d, in %s mode',
-        server.get('port'),
-        server.get('env')
-    );
+  log.server('Server started on %d, in %s mode',
+    server.get('port'),
+    server.get('env')
+  );
 });

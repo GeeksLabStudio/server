@@ -1,6 +1,7 @@
 module.exports = {
 	server: 'localhost:' + 4000,
 	auth: {
+		path: '/auth',
 		login: {
 			path: '/login'
 		},
@@ -10,8 +11,8 @@ module.exports = {
 		profile: {
 			path: '/',
 			permissions: [
-				'USER',
-				'ADMIN'
+				'ADMIN',
+				'USER'
 			]
 		}
 	}
